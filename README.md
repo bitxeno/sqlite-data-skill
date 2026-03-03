@@ -8,21 +8,23 @@ Agent "Skills" are specialized folders containing instructions, patterns, and ex
 
 ## Installation / Usage
 
-To introduce this skill to your AI assistant, expose the `SKILL.md` file or this repository directory to your agent's context.
+Depending on your agent platform, there are multiple ways to install and use this skill:
 
-### Depending on your Setup:
+### Using Vercel / npx Agent Skills
 
-**Generic Platform (Goose, Cursor, IDEs):**
-1. Clone this repository to your computer:
-   ```bash
-   git clone https://github.com/bitxeno/sqlite-data-skill.git
-   ```
-2. Move the folder to your agent's dedicated `skills/` or `.agents/` directory.
+If your agent supports standard npm-based skill installation configurations, you can easily add this directly via `npx`:
 
-**IDE-Specific Shortcuts:**
+```bash
+npx skills add https://github.com/bitxeno/sqlite-data-skill
+```
+This single command will clone and resolve the instructions of `SKILL.md` within your project's `/.skills` registry so your AI agent understands all rules related to the `SQLiteData` package.
+
+### IDE-Specific Shortcuts (Cursor, Cline, etc.)
+
 - Alternatively, copy the `SKILL.md` file into your Xcode/app project root and rename it to `.cursorrules` (or simply refer the AI to read `.cursorrules`). The AI will naturally incorporate the instructions into its generated code.
 
-**Manual Chat Prompts:**
+### Manual Chat Prompts
+
 - Open `SKILL.md`, copy its entire content, and paste it to your conversational LLM companion (like ChatGPT, Claude). Ask it to use the information as a reference to help you build or rewrite features using SQLiteData.
 
 ## Content Overview
@@ -34,5 +36,4 @@ The included `SKILL.md` manual teaches the AI handler how to:
 4. **Change Observation**: Correctly wire updates to SwiftUI views and handle `@Observable` states alongside `@ObservationIgnored`.
 5. **Dynamic Queries**: Build reactive queries leveraging `$property.load()`.
 6. **CRUD Operations**: Centralizing writes via dependency injection (`defaultDatabase`).
-7. **Associations**: Write proper native SQL joints rather than ORM pattern links.
-
+7. **Associations**: Write proper native SQL joins rather than ORM pattern links.
