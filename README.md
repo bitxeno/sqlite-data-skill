@@ -10,14 +10,23 @@ Agent "Skills" are specialized folders containing instructions, patterns, and ex
 
 Depending on your agent platform, there are multiple ways to install and use this skill:
 
-### Using Vercel / npx Agent Skills
+### Using `npx` (Vercel Agent Skills / Others)
 
 If your agent supports standard npm-based skill installation configurations, you can easily add this directly via `npx`:
 
 ```bash
 npx skills add https://github.com/bitxeno/sqlite-data-skill
 ```
+
 This single command will clone and resolve the instructions of `SKILL.md` within your project's `/.skills` registry so your AI agent understands all rules related to the `SQLiteData` package.
+
+### Clone Locally (Generic approach)
+
+Using basic Git cloning, you can pull this directly to your agent's knowledge workspace:
+
+```bash
+git clone https://github.com/bitxeno/sqlite-data-skill.git .skills/sqlite-data
+```
 
 ### IDE-Specific Shortcuts (Cursor, Cline, etc.)
 
@@ -30,6 +39,7 @@ This single command will clone and resolve the instructions of `SKILL.md` within
 ## Content Overview
 
 The included `SKILL.md` manual teaches the AI handler how to:
+
 1. **Define Schemas**: Use the `@Table` macro with structs instead of `@Model` classes.
 2. **Database Preparation**: Implement `appDatabase()` setup, tracing, testing configurations, and migrations.
 3. **Data Fetching**: Use `@FetchAll`, `@FetchOne`, `@Fetch`, properly order items, and resolve joins.
