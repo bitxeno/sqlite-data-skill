@@ -635,6 +635,105 @@ private struct Facts: FetchKeyRequest {
 
 > **Important:** If a parent view refreshes, a dynamically-updated query can be overwritten with the initial `@FetchAll`'s value. Use `@State @FetchAll` to keep query state local to the view.
 
+### Pagination
+
+#### Offset-based Pagination
+
+Use `.limit(_:offset:)` to fetch a specific page of results:
+
+```swift
+let pageSize = 20
+let page = 2  // 0-indexed
+
+@FetchAll(
+  Item
+    .order { $0.title }
+    .limit(pageSize, offset: page * pageSize)
+)
+var items
+```
+
+Dynamically load a page in response to user input:
+
+```swift
+struct ItemsView: View {
+  @State @FetchAll var items: [Item]
+  @State var page = 0
+  let pageSize = 20
+
+  var body: some View {
+    List(items) { item in Text(item.title) }
+    HStack {
+      Button("Previous") { page = max(0, page - 1) }
+      Button("Next") { page += 1 }
+    }
+    .task(id: page) {
+      await withErrorReporting {
+        try await $items.load(
+          Item
+            .order { $0.title }
+            .limit(pageSize, offset: page * pageSize)
+        )
+      }
+    }
+  }
+}
+```
+
+#### Cursor (Keyset) Pagination
+
+Keyset pagination uses the last seen value as a cursor, which is more efficient and stable than offset pagination for large datasets:
+
+```swift
+// First page — no cursor
+@FetchAll(
+  Item
+    .order { $0.id }
+    .limit(20)
+)
+var items
+```
+
+```swift
+// Next page — pass the last seen id as cursor
+let lastID = items.last?.id
+
+@FetchAll(
+  Item
+    .where { $0.id > #bind(lastID ?? 0) }
+    .order { $0.id }
+    .limit(20)
+)
+var nextItems
+```
+
+Dynamically load the next page inside a model:
+
+```swift
+@Observable
+@MainActor
+class ItemsModel {
+  @ObservationIgnored
+  @State @FetchAll var items: [Item]
+
+  @Dependency(\.defaultDatabase) var database
+
+  var lastID: Item.ID? = nil
+
+  func loadNextPage() async {
+    await withErrorReporting {
+      try await $items.load(
+        Item
+          .where { $0.id > #bind(lastID ?? 0) }
+          .order { $0.id }
+          .limit(20)
+      )
+      lastID = items.last?.id
+    }
+  }
+}
+```
+
 ---
 
 ## 6. CRUD Operations
