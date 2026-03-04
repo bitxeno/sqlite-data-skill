@@ -332,11 +332,42 @@ With ordering:
 var items
 ```
 
+With ordering by multiple columns:
+
+```swift
+@FetchAll(Item.order(by: \.isInStock, \.title))
+var items
+```
+
 With filtering:
 
 ```swift
 @FetchAll(Reminder.where(\.isCompleted).order { $0.title.desc() })
 var completedReminders
+```
+
+With ordering by multiple columns using a closure:
+
+```swift
+@FetchAll(
+  Item.order {
+    ($0.isInStock,
+     $0.title)
+  }
+)
+var items
+```
+
+With mixed sort directions across multiple columns:
+
+```swift
+@FetchAll(
+  Item.order {
+    ($0.isInStock,
+     $0.title.desc())
+  }
+)
+var items
 ```
 
 With animation:
